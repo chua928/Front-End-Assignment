@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EXPLORE | Travel Blog</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    
+    :root {
+            --primary: #4361ee;
+            --primary-light: #5080b6;
+            --secondary: #3f37c9;
+            --dark: #1a1a2e;
+            --light: #ffffff;
+            --accent: #f72585;
+            --success: #4cc9f0;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --text-light: #6c757d;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --border-radius: 12px;
+            --header-height: 80px;
+        }
+
+        [data-theme="dark"] {
+            --primary: #4895ef;
+            --primary-light: #283982;
+            --dark: #0d0d1a;
+            --light: #1a1a2e;
+            --card-bg: #16213e;
+            --text: #f8f9fa;
+            --text-light: #adb5bd;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--text);
+            transition: var(--transition);
+            line-height: 1.6;
+            padding-top: var(--header-height);
+        }
+
+        /* ===== Header Styles ===== */
+        .glass-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            height: var(--header-height);
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        [data-theme="dark"] .glass-header {
+            background: rgba(26, 26, 46, 0.9);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            height: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .main-nav ul {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .main-nav li {
+            display: inline-block;
+        }
+
+        .main-nav a {
+            white-space: nowrap;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+            transition: var(--transition);
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 3px;
+        }
+
+        .nav-link i {
+            font-size: 1.1rem;
+        }
+
+        /* Hamburger Menu Styles */
+        .hamburger {
+            position: absolute;
+            right: 80px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: none;
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 1001;
+            order: 1;
+            margin-left: 1rem;
+        }
+
+        .nav-text {
+            display: inline;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* ===== Theme Switcher ===== */
+        .theme-switcher {
+            position: relative;
+        }
+
+        .theme-toggle {
+            background: rgba(67, 97, 238, 0.1);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(67, 97, 238, 0.2);
+        }
+
+        .theme-dropdown {
+            position: absolute;
+            right: 0;
+            top: 50px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1rem;
+            width: 180px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .theme-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-option:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .theme-option.active {
+            background: rgba(67, 97, 238, 0.2);
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* ===== Main Content ===== */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            margin-top: 20px;
+            font-size: 2.5rem;
+            color: var(--primary);
+            font-weight: 700;
+          }
+        .sub-title{
+            text-align: center;
+            margin-bottom: 2.5rem;
+            font-size: 1rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .city-filter { 
+  width: 100%;
+  padding: 0.7rem 1.2rem;
+  border-radius: 30px;
+  background-color: rgba(67, 97, 238, 0.1);
+  color: var(--primary);
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  appearance: none; 
+  background-image: url("data:image/svg+xml,%3Csvg fill='black' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.23 7.21a.75.75 0 011.06.02L10 11.292l3.71-4.06a.75.75 0 111.1 1.02l-4.25 4.655a.75.75 0 01-1.1 0L5.21 8.29a.75.75 0 01.02-1.08z' /%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+}
+
+.city-filter:hover { 
+  background-color: rgba(67, 97, 238, 0.2);
+}
+
+.city-filter:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+.city-guides-container { 
+  display: none;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.city-guide-box { 
+  position: relative;
+  background-color: var(--primary-light);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 1rem;
+  -webkit-text-fill-color: white;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.city-guide-box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.city-guide-box img { 
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.city-guide-box h3 { 
+  margin-top: 0;
+}
+
+.city-guide-box button { 
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #113760;
+  color: white;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+
+.city-guide-box .details { 
+  display: none;
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.city-guide-box:hover .details { 
+  display: block;
+}
+
+    @media (max-width: 992px) {
+            .hamburger {
+                display: block;
+                order: 2;
+            }
+
+            .main-nav {
+                position: fixed;
+                top: var(--header-height);
+                left: 0;
+                right: 0;
+                background: var(--card-bg);
+                box-shadow: var(--shadow);
+                padding: 2rem;
+                transform: translateY(-100%);
+                opacity: 0;
+                transition: transform 0.3s ease, opacity 0.3s ease;
+                z-index: 1000;
+                pointer-events: none;
+                order: 2;
+                margin: 0 auto;
+            }
+
+            .main-nav.active {
+                transform: translateY(0);
+                opacity: 1;
+                pointer-events: all;
+            }
+
+            .main-nav ul {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .nav-text {
+                display: inline;
+            }
+
+            .header-actions {
+                order: 3;
+                margin-left: auto;
+            }
+
+            .header-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+            }
+
+            .main-nav ul {
+                gap: 1rem;
+            }
+
+            .blog-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+
+            /* Hide theme dropdown when mobile menu is open */
+            body.menu-open .theme-dropdown {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                height: auto;
+                padding: 1rem;
+            }
+
+            .logo {
+                margin-bottom: auto;
+            }
+
+            .main-nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .filter-buttons {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .nav-text {
+                display: none;
+            }
+
+            .main-nav ul {
+                align-items: center;
+            }
+
+            .nav-link {
+                justify-content: center;
+            }
+
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+
+  </style>
+</head>
+<body>
+  <header>
+    <header class="glass-header">
+      <div class="header-container">
+          <a href="index.html" class="logo">
+              <i class="fas fa-globe-americas"></i>
+              <span>EXPLORE</span>
+          </a>
+
+          <button class="hamburger" id="hamburger">
+              <i class="fas fa-bars"></i>
+          </button>
+
+          <nav class="main-nav" id="mainNav">
+              <ul>
+                  <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                  <li><a href="DestinationPage.html" class="nav-link"><i
+                              class="fas fa-map-marked-alt"></i>Destinations</a></li>
+                  <li><a href="travelguide.html" class="nav-link active"><i class="fas fa-book-open"></i> Travel Guide</a>
+                  </li>
+                  <li><a href="itinerary.html" class="nav-link"><i class="fas fa-route"></i> Itinerary Planner</a>
+                  </li>
+                  <li><a href="TravelTips.html" class="nav-link"><i class="fas fa-lightbulb"></i> Travel Tips</a></li>
+                  <li><a href="gallery.html" class="nav-link"><i class="fas fa-images"></i> Gallery</a></li>
+                  <li><a href="blog.html" class="nav-link"><i class="fas fa-newspaper"></i> Blog</a></li>
+                  <li><a href="contact.html" class="nav-link"><i class="fas fa-question-circle"></i> About/FAQ</a>
+                  </li>
+              </ul>
+          </nav>
+
+          <div class="header-actions">
+              <div class="theme-switcher">
+                  <button class="theme-toggle" id="themeToggle">
+                      <i class="fas fa-moon"></i>
+                  </button>
+                  <div class="theme-dropdown" id="themeDropdown">
+                      <div class="theme-option" data-theme="auto">
+                          <i class="fas fa-adjust"></i>
+                          <span>System</span>
+                      </div>
+                      <div class="theme-option" data-theme="light">
+                          <i class="fas fa-sun"></i>
+                          <span>Light</span>
+                      </div>
+                      <div class="theme-option" data-theme="dark">
+                          <i class="fas fa-moon"></i>
+                          <span>Dark</span>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>      
+    </header>
+      <h1 class="page-title"> Travel Guides</h1>
+      <p class="sub-title">Find things to do, cultural insights, travel tips and more!</p>
+      <div class="filter-section">
+          <select class="city-filter" id="filterSelect">
+              <option value="">🔷🔶 Select a City 🔶🔷</option>
+              <option value="tokyo">🔴TOKYO JAPAN</option>
+              <option value="italy">🟠ROME ITALY</option>
+              <option value="mongkok">🟡MONG KOK HONG KONG</option>
+              <option value="kualalumpur">🟢KUALA LUMPUR MALAYSIA</option>
+              <option value="melaka">🔵MELAKA MALAYSIA</option>
+              <option value="disney">🟣DISNEYLAND Hong Kong</option>
+              <option value="chiangrai">⚪CHIANG RAI THAILAND</option>
+          </select>
+      </div>
+
+      <main id="guides" class="city-guides-container">
+      </main>
+      <footer>
+        <div class="footer-content">
+            <p class="copyright">&copy; 2025 EXPLORE. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+    const themeToggle = document.getElementById('themeToggle');
+        const themeDropdown = document.getElementById('themeDropdown');
+        const themeOptions = document.querySelectorAll('.theme-option');
+        const html = document.documentElement;
+
+        // ===== Initialize Page (related part) =====
+        function initPage() {
+            // ... other initialization code ...
+
+            // Set initial theme
+            const savedTheme = localStorage.getItem('theme') || 'auto';
+            setTheme(savedTheme);
+        }
+
+        function setTheme(theme) {
+            if (theme === 'auto') {
+                const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                html.setAttribute('data-theme', systemTheme);
+            } else {
+                html.setAttribute('data-theme', theme);
+            }
+
+            // Update active state
+            themeOptions.forEach(option => {
+                option.classList.toggle('active', option.dataset.theme === theme);
+            });
+
+            // Update toggle icon
+            const currentTheme = theme === 'auto' ?
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') :
+                theme;
+
+            themeToggle.innerHTML = currentTheme === 'dark' ?
+                '<i class="fas fa-moon"></i>' :
+                '<i class="fas fa-sun"></i>';
+
+            // Save to localStorage
+            localStorage.setItem('theme', theme);
+        }
+
+        // Theme switcher
+        themeToggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            themeDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function () {
+            themeDropdown.classList.remove('show');
+        });
+
+        // Prevent dropdown from closing when clicking inside
+        themeDropdown.addEventListener('click', function (e) {
+            e.stopPropagation();
+        });
+
+        // Theme options
+        themeOptions.forEach(option => {
+            option.addEventListener('click', function () {
+                const selectedTheme = this.dataset.theme;
+                setTheme(selectedTheme);
+            });
+        });
+
+        // System theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (localStorage.getItem('theme') === 'auto') {
+                setTheme('auto');
+            }
+        });
+
+        // Initialize the page on load (call this function)
+        initPage();
+
+    const cityData = {
+      tokyo: {
+        title: "Tokyo",
+        image: "images/tokyo.jpg",
+        content: [
+          "🛍️ Shopping: Shibuya 109, Ginza",
+          "🍜 Eat: Ichiran Ramen, Tsukiji Sushi",
+          "🏨 Stay: Shinjuku Granbell Hotel",
+          "🎎 Cultural: Visit Meiji Shrine",
+          "✈️ Travel Tips: Get a Suica card"
+        ],
+        details: {
+          shopping: [
+            { name: "Shibuya 109", image: "images/Shibuya109.jpg", mapLink: "https://maps.app.goo.gl/mi9XwdTzGEeJjLUa7" },
+            { name: "Ginza", image: "images/ginza.jpg", mapLink: "https://maps.app.goo.gl/2UPrCs3XvU64wSDg9" }
+          ],
+          eat: [
+            { name: "Ichiran Ramen", image: "images/ichiran_ramen.jpg" },
+            { name: "Tsukiji Sushi", image: "images/tsukiji_sushi.jpg" }
+          ],
+          stay: [
+            {name:"Shinjuku Granbell Hotel: +81-3-5155-2666", image: "images/ShinjukuGranbellHotel.jpg", mapLink: "https://maps.app.goo.gl/mi9XwdTzGEeJjLUa7" },
+            ],
+          cultural: "<p>🎎 Cultural Highlights of Tokyo</p><p>⛩️ Shinto Shrines & Buddhist Temples</p><p>Meiji Shrine: A serene Shinto shrine dedicated to Emperor Meiji and Empress Shoken.</p><p>Senso-ji Temple: Tokyo’s oldest and most famous temple, located in Asakusa, bustling with shops and rituals.</p><p>🏯 Traditional vs Modern Fusion</p><p>Tokyo is a blend of samurai-era history and cutting-edge tech culture.</p><p>Explore neighborhoods like Yanaka for old-world charm and Shibuya or Akihabara for futuristic vibes.</p><p>🎭 Kabuki & Noh Theatre</p><p>Kabuki-za Theatre in Ginza offers traditional Japanese performances full of drama, music, and dance.</p><p>🎨 Ukiyo-e & Modern Art</p><p>Visit the Sumida Hokusai Museum (dedicated to the famous wave artist).</p><p>Tokyo also boasts impressive contemporary art galleries like teamLab Planets for digital art experiences.</p><p>👘  Cultural Experiences</p><p>Try on a kimono and stroll historic districts.</p><p>Join a tea ceremony, calligraphy class, or even a samurai sword demonstration.</p>",
+          travelTips: "<p>🧳 Travel Tips for Tokyo</p><p>🗓️ Best Time to Visit</p><p>Spring (March–May): Enjoy the cherry blossoms (sakura).</p><p>Autumn (Sept–Nov): Cool weather and beautiful foliage.</p><p>Summer can be hot and humid; winter is mild but pleasant.</p><p>🚆 Transport Tips</p><p>Get a Suica or Pasmo IC card for easy subway and train rides.</p><p>Tokyo’s rail system is efficient but can be busy—avoid rush hour (7–9am and 5–7pm).</p><p>📱 Connectivity</p><p>Rent a pocket Wi-Fi or Japanese SIM card for easy navigation and communication.</p><p>Many stations and cafes offer free Wi-Fi.</p><p>💳 4. Cash & Cards</p><p>Japan still relies on cash, especially at smaller shops and local eateries.</p><p>ATMs at 7-Eleven or post offices accept foreign cards.</p><p>🧹 Clean but No Trash Bins</p><p>Tokyo is super clean, but public trash cans are rare. Carry a small bag for your trash.</p>"
+        }
+      },
+      italy: {
+        title: "Rome",
+        image: "images/italy.jpg",
+        content: [
+          "🛍️ Shopping: Via del Corso, Milan",
+          "🍝 Eat: Pizza in Naples, Pasta in Rome",
+          "🏨 Stay: Hotel Artemide Rome",
+          "🏛️ Cultural: Visit the Colosseum",
+          "✈️ Travel Tips: Validate train tickets"
+        ],
+        details: {
+          shopping: [
+            { name: "Via del Corso", image: "images/via_del_corso.jpg", mapLink: "https://maps.app.goo.gl/vPdNg6u5wHwH8w2H9" },
+            { name: "Milan", image: "images/milan.jpg", mapLink: "https://maps.app.goo.gl/kBn763tWffi4Cfa86" }
+          ],
+          eat: [
+            { name: "Pizza in Naples", image: "images/pizza_naples.jpg" },
+            { name: "Pasta in Rome", image: "images/pasta_rome.jpg" }
+          ],
+          stay: [
+            {name:"Hotel Artemide Rome: +39-06-489911", image: "images/HotelArtemideRome.jpg", mapLink: "https://maps.app.goo.gl/AHHpXb6KfmsGMPcF7" },
+            ],
+          cultural: "Visit the Colosseum also known as the Flavian Amphitheatre, is one of the greatest examples of Roman engineering and architecture. It reflects the power, innovation, and societal structure of Ancient Rome.",
+          travelTips: "Visit Palatine Hill and the Roman Forum nearby – They're included in most tickets and complete the picture of ancient Roman life."
+        }
+      },
+      mongkok: {
+        title: "Mong Kok",
+        image: "images/mongkok.jpg",
+        content: [
+          "🛍️ Shopping: Ladies Market",
+          "🍲 Eat: Street food at Dundas St",
+          "🏨 Stay: Cordis Hotel",
+          "🧧 Cultural: Wong Tai Sin Temple",
+          "✈️ Travel Tips: Use Octopus card"
+        ],
+        details: {
+          shopping: [
+            { name: "Ladies Market", image: "images/ladies_market.jpg", mapLink: "https://maps.app.goo.gl/cUvYwEAEjN8C5v276" }
+          ],
+          eat: [
+            { name: "Street food at Dundas St", image: "images/street_food.jpg" }
+          ],
+          stay: [
+            {name:"Cordis Hotel: +852-3552-3552", image: "images/CordisHotel.jpg", mapLink: "https://maps.app.goo.gl/j1WKrbnXBESWbfTT6" },
+            ],
+          cultural: "Wong Tai Sin Temple is one of Hong Kong’s most iconic and spiritual landmarks. Dedicated to the Taoist deity Wong Tai Sin, the temple is believed to grant every wish upon request. Located just a short ride from Mong Kok, it blends Taoist, Buddhist, and Confucian traditions. The temple complex is adorned with beautiful pavilions, lush gardens, and ornate decorations. A highlight is the Nine Dragon Wall, inspired by the famous version in Beijing.",
+          travelTips: "Visit during weekdays: Mong Kok is one of the busiest places in the world. Try to visit on weekday mornings to avoid the thickest crowds, especially in places like Ladies’ Market or Sneaker Street."
+        }
+      },
+      kualalumpur: {
+        title: "Kuala Lumpur",
+        image: "images/kualalumpur.jpg",
+        content: [
+          "🛍️ Shopping: Pavilion, Suria KLCC",
+          "🍛 Eat: Jalan Alor night food street",
+          "🏨 Stay: Traders Hotel KL",
+          "🕌 Cultural: National Mosque, Batu Caves",
+          "✈️ Travel Tips: Use Grab for transport"
+        ],
+        details: {
+          shopping: [
+            { name: "Pavilion", image: "images/pavilion.jpg", mapLink: "https://maps.app.goo.gl/R2LFDEVtwYGfMh6W6" },
+            { name: "Suria KLCC", image: "images/suria_klcc.jpg", mapLink: "https://maps.app.goo.gl/c274xMS69jPSsYXE7" }
+          ],
+          eat: [
+            { name: "Jalan Alor night food street", image: "images/jalan_alor.jpg" }
+          ],
+          stay: [
+            {name:"Traders Hotel KL: +60-3-2332-9888", image: "images/TradersHotelKL.jpg", mapLink: "https://maps.app.goo.gl/zpUeLD146JhLsdVo9" },
+            ],
+          cultural: "National MosqueNational Mosque (Masjid Negara)<p>A stunning symbol of Malaysia’s Islamic heritage, the National Mosque in Kuala Lumpur is an architectural masterpiece with its 73-meter-high minaret and star-shaped main dome. It represents Malaysia's identity as a modern Islamic nation and is open to visitors outside of prayer times. Modest attire is required, and robes are provided for tourists. The tranquil gardens and reflective pools surrounding the mosque offer a peaceful escape from the city bustle.</p><p>Batu Caves</p><p>Located just outside central Kuala Lumpur, Batu Caves is a significant Hindu religious site dedicated to Lord Murugan. The site features a towering golden statue and a steep flight of 272 colorful steps leading to limestone caves filled with Hindu shrines and temples. The annual Thaipusam festival draws thousands of devotees and tourists alike, showcasing vibrant rituals, body piercings, and processions. Batu Caves is a true cultural melting pot and a must-visit for its spiritual and visual impact.</p>",
+          travelTips: "<p>🕌Cultural Etiquette</p><p>-Dress modestly at religious sites.</p><p>-Remove shoes when entering homes and temples.</p><p>-Greet with a smile – Malaysians are friendly and helpful!</p><p>💸Money Tips</p><p>-Credit cards accepted in malls, but carry cash for local markets and street food.</p><p>-ATMs are widely available.</p><p>-Tipping is not required but appreciated for good service</p>"
+        }
+      },
+      melaka: {
+        title: "Melaka",
+        image: "images/melaka.jpg",
+        content: [
+          "🛍️ Shopping: Jonker Street",
+          "🍜 Eat: Chicken rice balls",
+          "🏨 Stay: The Majestic Malacca",
+          "🏯 Cultural: Stadthuys, A Famosa",
+          "✈️ Travel Tips: Great for weekend trips"
+        ],
+        details: {
+          shopping: [
+            { name: "Jonker Street", image: "images/jonker_street.jpg", mapLink: "https://maps.app.goo.gl/SZJgVhVcvyU6r2wc6" }
+          ],
+          eat: [
+            { name: "Chicken rice balls", image: "images/chicken_rice_balls.jpg" }
+          ],
+          stay: [
+            {name:"The Majestic Malacca: +60-6-289-8000", image: "images/TheMajesticMalacca.jpg", mapLink: "https://maps.app.goo.gl/yhTEy1kWkLoTpDPC8" },
+            ],
+          cultural: "<p>🎭 Cultural Highlights of Melaka</p><p>🏯 A Famosa Fort</p><p>A 16th-century Portuguese fortress, one of the oldest surviving European architectural remains in Asia.</p><p>⛪ St. Paul’s Church</p><p>Built by the Portuguese in 1521, later used by the Dutch.</p>",
+          travelTips: "<p>🚗 Getting There</p><p>From Kuala Lumpur: About 2 hours by car or express bus (departing from TBS Bus Terminal).</p><p>-Melaka Sentral is the main bus terminal; taxis and Grab are available from there.</p><p>🚶Getting Around</p><p>-Most attractions in the old town are walkable.</p><p>-Trishaws are fun for short city rides, especially at night (they’re colorfully decorated!).</p><p>-Grab app is reliable for transport.</p>"
+        }
+      },
+      disney: {
+        title: "Disneyland Hong Kong",
+        image: "images/disney.jpg",
+        content: [
+          "🎢 Rides: Mystic Manor, Iron Man Experience",
+          "🍽️ Eat: Explorer’s Club Restaurant",
+          "🏨 Stay: Disney Hollywood Hotel",
+          "🎭 Cultural: Disney characters with Cantonese flair",
+          "✈️ Travel Tips: Download the Disneyland app"
+        ],
+        details: {
+          shopping: [
+            { name: "Disney merchandise", image: "images/disney_merchandise.jpg", mapLink: "https://maps.app.goo.gl/Xc5SfmWEgQL9svg69" }
+          ],
+          eat: [
+            { name: "Explorer’s Club Restaurant", image: "images/explorers_club.jpg" }
+          ],
+          stay: [
+            {name:"Disney Hollywood Hotel: +852-3510-8000", image: "images/Disney Hollywood Hotel.jpg", mapLink: "https://maps.app.goo.gl/QoLHGGTNQxNvn3Dn8" },
+            ],
+          cultural: "<p>🎭 Cultural Highlights of Hong Kong Disneyland</p><p>🏯 Fusion of East & West</p><p>-Hong Kong Disneyland incorporates Chinese cultural elements into its design, entertainment, and food.</p><p>-The park honors Feng Shui principles, such as adjusting building orientations and the famous bending of walkways to avoid straight paths, believed to ward off bad spirits.</p><p>🎆 Chinese Festivals Celebration</p><p>-Lunar New Year: The park is beautifully decorated with red lanterns, and Disney characters appear in traditional Chinese outfits. Special shows and themed merchandise are offered.</p><p>-Mid-Autumn Festival: Includes mooncake-themed snacks and seasonal decorations.</p>",
+          travelTips: "<p>✈️ Travel Tips for Hong Kong Disneyland</p><p>🎟️ Buy Tickets in Advance</p><p>-Purchase tickets online from the official website or trusted platforms to avoid long queues and sometimes get discounts or combo deals.</p><p>📅 Visit on a Weekday</p><p>-Weekdays (especially Tuesdays–Thursdays) are less crowded compared to weekends or holidays.</p><p>-Avoid local public holidays and Mainland China’s Golden Week.</p>"
+        }
+      },
+      chiangrai: {
+        title: "Chiang Rai",
+        image: "images/chiangrai.jpg",
+        content: [
+          "🛍️ Shopping: Chiang Rai Night Bazaar",
+          "🍲 Eat: Local Lanna cuisine",
+          "🏨 Stay: The Legend Chiang Rai",
+          "⛩️ Cultural: White Temple (Wat Rong Khun)",
+          "✈️ Travel Tips: Cool weather, light jackets"
+        ],
+        details: {
+          shopping: [
+            { name: "Chiang Rai Night Bazaar", image: "images/chiangrai_night_bazaar.jpg", mapLink: "https://maps.app.goo.gl/ApWC67ZBPg6aCauGA" }
+          ],
+          eat: [
+            { name: "Local Lanna cuisine", image: "images/lanna_cuisine.jpg" }
+          ],
+          stay: [
+            {name:"The Legend Chiang Rai: +66-53-910-400", image: "images/The Legend Chiang Rai.jpg", mapLink: "https://maps.app.goo.gl/8QdAXBy7P3MDszW2A" },
+            ],
+          cultural: "<p>🎭 Cultural Highlights of Chiang Rai</p><p>🛕 Wat Rong Khun (White Temple)</p><p>A stunning contemporary Buddhist temple created by Thai artist Chalermchai Kositpipat.</p><p>-The temple features white plaster and mirror fragments symbolizing purity and enlightenment.</p><p>🌈 Wat Rong Suea Ten (Blue Temple)</p><p>Known for its vibrant blue interior and intricate gold patterns.</p><p>-A newer temple but deeply symbolic, reflecting Buddhist beliefs in modern art style.</p><p>💀 Baan Dam Museum (Black House)</p><p>A unique museum and art installation combining traditional northern Thai architecture with dark, surreal exhibits.</p><p>-Offers insight into local interpretations of life, death, and spirituality.</p><p>🌄 Hill Tribe Villages</p><p>Chiang Rai is home to diverse ethnic hill tribes like the Akha, Karen, and Yao.</p><p>-You can learn about traditional lifestyles, weaving, farming, and tribal customs through ethical tours.</p><p>🕊️ Buddhist Influence</p><p>Temples and monastic life play a big role in the local culture. Visitors often see monks collecting alms in the morning.</p><p>-Respect for Buddhism is essential—dress modestly and behave respectfully at sacred sites.</p>",
+          travelTips: "<p>🧳 Travel Tips for Chiang Rai</p><p>🗓️ Best Time to Visit</p><p>November to February: Cool and dry season with pleasant weather and clear skies—perfect for sightseeing.</p><p>Avoid rainy season (May–October) if you want to explore outdoors.</p><p>💸 Carry Cash</p><p>While hotels and bigger restaurants take cards, many local shops, night markets, and rural attractions accept cash only.</p><p>🛍️ Explore Local Markets</p><p>Visit the Chiang Rai Night Bazaar or Saturday Walking Street Market for street food, handmade crafts, and souvenirs.</p><p>Try local specialties like khao soi and kanom jeen nam ngiao.</p>"
+        }
+      }
+    };
+
+    const filterSelect = document.getElementById("filterSelect");
+const guidesContainer = document.getElementById("guides");
+let selectedBox = null;
+
+function displayGuideBox(cityKey) {
+    const city = cityData[cityKey];
+    const box = document.createElement("div");
+    box.className = "city-guide-box";
+    box.dataset.cityKey = cityKey;
+    let contentHTML = '';
+    if (city.content && Array.isArray(city.content)) {
+        contentHTML = city.content.map(item => `<p>${item}</p>`).join("");
+    }
+
+    box.innerHTML =
+        `<img src="${city.image}" alt="${city.title}" />` +
+        `<h3 style="font-weight:bold;">${city.title}</h3>` +
+        contentHTML +
+        `<button onclick="showDetails('${cityKey}')">More Details</button>`;
+
+    box.addEventListener('click', function() {
+        if (selectedBox && selectedBox !== this) {
+            selectedBox.classList.remove('selected');
+        }
+        this.classList.toggle('selected');
+        selectedBox = this;
+
+        if (document.querySelectorAll('.city-guide-box.selected').length > 0) {
+            guidesContainer.classList.add('single-selected');
+        } else {
+            guidesContainer.classList.remove('single-selected');
+        }
+    });
+
+    return box;
+}
+
+function displayAllCities() {
+    guidesContainer.innerHTML = "";
+    guidesContainer.classList.remove('single-selected');
+    selectedBox = null;
+    Object.keys(cityData).forEach(key => {
+        guidesContainer.appendChild(displayGuideBox(key));
+    });
+    guidesContainer.style.display = "grid";
+}
+
+function displaySingleCity(key) {
+    guidesContainer.innerHTML = "";
+    guidesContainer.classList.add('single-selected');
+    selectedBox = null;
+    if (cityData[key]) {
+        const box = displayGuideBox(key);
+        box.classList.add('selected');
+        selectedBox = box;
+        guidesContainer.appendChild(box);
+        guidesContainer.style.display = "grid";
+    } else {
+        guidesContainer.style.display = "none";
+    }
+}
+
+function showDetails(cityKey) {
+    const city = cityData[cityKey];
+    const detailsWindow = window.open("", "_blank");
+    detailsWindow.document.write(`
+        <html>
+        <head>
+            <title>${city.title} Details</title>
+            <style>
+                body {
+                    font-family: 'Segoe UI', sans-serif;
+                    background-image: url('images/background_image4.jpg');
+                    color: #5b76c8;
+                    padding: 2rem;
+                }
+                h1 {
+                    text-align: center;
+                    color: #007bff;
+                }
+                .details-container {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 2rem;
+                }
+                .details-box {
+                    background-color: white;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                    padding: 1rem;
+                }
+                .details-box img {
+                    width: 100%;
+                    height: 200px;
+                    object-fit: cover;
+                    border-radius: 10px;
+                    margin-bottom: 1rem;
+                }
+                .details-box a {
+                    color: #007bff;
+                    text-decoration: none;
+                }
+            </style>
+        </head>
+        <body>
+            <h1 font-weight=bold;">${city.title} Details</h1>
+            <div class="details-container">
+                ${city.details.shopping ? `<div class="details-box">
+                    <h2 style="color: rgb(7, 52, 164); font-weight=bold;">Shopping</h2>
+                    ${city.details.shopping.map(shop => `
+                        <div>
+                            <h4 style="color: rgb(7, 52, 164); font-weight=bold;">${shop.name}</h4>
+                            <img src="${shop.image}" alt="${shop.name}" />
+                            <p><a href="${shop.mapLink}" target="_blank">View on Map</a></p>
+                        </div>
+                    `).join("")}
+                </div>` : ''}
+                ${city.details.eat ? `<div class="details-box">
+                    <h2 style="color: rgb(7, 52, 164); font-weight=bold;">Eat</h2>
+                    ${city.details.eat.map(food => `
+                        <div>
+                            <h4 style="color: rgb(7, 52, 164); font-weight=bold;">${food.name}</h4>
+                            <img src="${food.image}" alt="${food.name}" />
+                        </div>
+                    `).join("")}
+                </div>` : ''}
+                ${city.details.stay ? `<div class="details-box">
+                    <h2 style="color: rgb(7, 52, 164); font-weight=bold;">Stay</h2>
+                    ${city.details.stay.map(stay => `
+                        <div>
+                            <h4 style="color: rgb(7, 52, 164); font-weight=bold;">${stay.name}</h4>
+                            <img src="${stay.image}" alt="${stay.name}" />
+                            <p><a href="${stay.mapLink}" target="_blank">View on Map</a></p>
+                        </div>
+                    `).join("")}
+                </div>` : ''}
+                ${city.details.cultural ? `<div class="details-box">
+                    <h2 style="color: rgb(7, 52, 164); font-weight=bold;">Cultural</h2>
+                    <p>${city.details.cultural}</p>
+                </div>` : ''}
+                ${city.details.travelTips ? `<div class="details-box">
+                    <h2 style="color: rgb(7, 52, 164); font-weight=bold;">Travel Tips</h2>
+                    <p>${city.details.travelTips}</p>
+                </div>` : ''}
+            </div>
+        </body>
+        </html>
+    `);
+    detailsWindow.document.close();
+}
+
+filterSelect.addEventListener("change", () => {
+    const value = filterSelect.value;
+    if (value === "") {
+        displayAllCities();
+    } else {
+        displaySingleCity(value);
+    }
+});
+
+// Initially display all cities
+displayAllCities();
+  </script>
+</body>
+</html>

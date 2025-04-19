@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Japan</title>
+  <!-- Bootstrap & Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    /* ===== Global Variables ===== */
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --dark: #1a1a2e;
+      --light: #f8f9fa;
+      --card-bg: #ffffff;
+      --text: #333333;
+      --text-light: #6c757d;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+      --border-radius: 12px;
+      --header-height: 80px;
+    }
+    [data-theme="dark"] {
+      --primary: #4895ef;
+      --dark: #0d0d1a;
+      --light: #1a1a2e;
+      --card-bg: #16213e;
+      --text: #f8f9fa;
+      --text-light: #adb5bd;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    body {
+      margin: 0;
+      padding-top: var(--header-height);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--light);
+      color: var(--text);
+      transition: var(--transition);
+    }
+
+    /* ===== Navigation ===== */
+    .glass-header {
+      position: fixed; top:0; left:0; right:0;
+      height: var(--header-height);
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      z-index:1000; transition:var(--transition);
+    }
+    [data-theme="dark"] .glass-header {
+      background: rgba(26,26,46,0.9);
+    }
+    .header-container {
+      max-width:1200px; margin:0 auto;
+      padding:0 2rem; height:100%;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .logo { font-size:1.8rem; font-weight:700; color:var(--primary); text-decoration:none; display:flex; align-items:center; gap:.5rem; }
+    .nav-list { display:flex; list-style:none; margin:0; padding:0; }
+    .nav-link {
+      margin:0 1rem; color:var(--text);
+      font-weight:500; text-decoration:none;
+      position:relative; transition:var(--transition);
+    }
+    .nav-link:hover, .nav-link.active { color:var(--primary); }
+    .nav-link.active::after {
+      content:''; position:absolute; bottom:-5px; left:0;
+      width:100%; height:3px; background:var(--primary); border-radius:3px;
+    }
+    .hamburger {
+      display:none; background:none; border:none;
+      font-size:1.8rem; cursor:pointer; color:var(--text);
+    }
+    @media (max-width:992px) {
+      .hamburger { display:block; }
+      .nav-list {
+        position:absolute; top:var(--header-height); left:0;
+        width:100%; flex-direction:column;
+        background:var(--card-bg); padding:2rem;
+        box-shadow:var(--shadow); display:none;
+      }
+      .nav-list.active { display:flex; }
+      .nav-link { margin:1rem 0; }
+    }
+
+    /* ===== Theme Switcher ===== */
+    .theme-switcher { position:relative; }
+    .theme-toggle {
+      background: rgba(67,97,238,0.1); border:none;
+      width:40px; height:40px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      color:var(--primary); cursor:pointer; transition:var(--transition);
+    }
+    .theme-dropdown {
+      position:absolute; top:50px; right:0;
+      background:var(--card-bg); border-radius:var(--border-radius);
+      box-shadow:var(--shadow); padding:1rem;
+      width:150px; opacity:0; visibility:hidden;
+      transform:translateY(10px); transition:var(--transition);
+    }
+    .theme-dropdown.show {
+      opacity:1; visibility:visible; transform:translateY(0);
+    }
+    .theme-option {
+      display:flex; align-items:center; gap:.5rem;
+      padding:.5rem; cursor:pointer; border-radius:6px;
+      transition:var(--transition);
+    }
+    .theme-option.active {
+      background:rgba(67,97,238,0.2); color:var(--primary);
+      font-weight:500;
+    }
+    .theme-option:hover { background:rgba(67,97,238,0.1); }
+
+    /* ===== Footer ===== */
+    footer {
+      background-color:var(--dark); color:#fff;
+      text-align:center; padding:2rem 0; margin-top:4rem;
+    }
+    .footer-content { max-width:1200px; margin:0 auto; padding:0 2rem; }
+    .copyright { font-size:.9rem; opacity:.8; }
+
+    /* ===== Page Content ===== */
+    .mainTitle { font-size:2.5rem; font-weight:700; color:var(--primary); margin-bottom:1rem; text-align:center; }
+    .introText { font-size:1rem; line-height:1.8; margin-bottom:2rem; }
+    .sectionTitle { font-size:1.75rem; font-weight:600; color:var(--primary); margin-top:2.5rem; margin-bottom:1rem; }
+    .attractionTitle { font-size:1.25rem; font-weight:600; margin-bottom:.5rem; }
+    .attractionText { font-size:1rem; margin-bottom:1rem; color:var(--text-light); }
+    .attractionImage { width:100%; border-radius:var(--border-radius); box-shadow:var(--shadow); margin-bottom:1.5rem; }
+    .travelTipsList { list-style:disc inside; margin-top:1rem; font-size:1rem; }
+    .travelTipsList li { margin-bottom:.75rem; }
+  </style>
+</head>
+<body data-theme="auto">
+  <!-- Navigation -->
+  <header class="glass-header">
+    <div class="header-container">
+      <a href="index.html" class="logo"><i class="fas fa-globe-americas"></i>EXPLORE</a>
+      <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+      <ul class="nav-list" id="navList">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="DestinationPage.html" class="nav-link">Destinations</a></li>
+        <li><a href="travelguide.html" class="nav-link">Travel Guide</a></li>
+        <li><a href="itinerary.html" class="nav-link">Itinerary Planner</a></li>
+        <li><a href="TravelTips.html" class="nav-link active">Travel Tips</a></li>
+        <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+        <li><a href="blog.html" class="nav-link">Blog</a></li>
+        <li><a href="contact.html" class="nav-link">About/FAQ</a></li>
+      </ul>
+      <div class="theme-switcher">
+        <button class="theme-toggle" id="themeToggle"><i class="fas fa-adjust"></i></button>
+        <div class="theme-dropdown" id="themeDropdown">
+          <div class="theme-option" data-theme="auto"><i class="fas fa-adjust"></i><span>System</span></div>
+          <div class="theme-option" data-theme="light"><i class="fas fa-sun"></i><span>Light</span></div>
+          <div class="theme-option" data-theme="dark"><i class="fas fa-moon"></i><span>Dark</span></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mt-5">
+    <h1 class="mainTitle">Japan</h1>
+
+    <div class="row my-4">
+      <div class="col-12 text-center">
+        <img src="images/Japan.jpg" alt="Japan" class="attractionImage">
+      </div>
+    </div>
+
+    <p class="introText">
+      Japan is renowned for its four distinct seasons, rich traditional culture, cutting‑edge technology,
+      and impeccable hospitality. From neon cityscapes in Tokyo to historic temples in Kyoto, every visit
+      reveals a new side of this endlessly fascinating country.
+    </p>
+
+    <h2 class="sectionTitle">Transport & Travel Tips</h2>
+    <p>
+      Take advantage of the Japan Rail Pass for unlimited Shinkansen and JR train travel. In cities,
+      use IC cards (Suica, ICOCA) on subways, buses, and convenience stores for seamless transit.
+    </p>
+    <ul class="travelTipsList">
+      <li>Book any long‑distance train tickets and popular attractions well in advance, especially during cherry blossom and autumn foliage seasons.</li>
+      <li>Carry a portable charger and a prepaid IC card to stay connected and tap through transit gates.</li>
+      <li>Download offline maps and translation apps — Wi‑Fi can be spotty in rural areas.</li>
+      <li>Experience a traditional onsen (hot spring). Remember to wash thoroughly before entering the communal bath.</li>
+      <li>Speak softly in public and remove your shoes when entering homes, ryokan, and some temples.</li>
+      <li>Learn basic greetings like “こんにちは” (Konnichiwa) and “ありがとうございます” (Arigatou gozaimasu) — locals appreciate the effort.</li>
+    </ul>
+
+    <h2 class="sectionTitle">Famous Attractions</h2>
+    <div class="row">
+      <div class="col-md-6">
+        <h3 class="attractionTitle">Tokyo</h3>
+        <p class="attractionText">
+          A high‑tech metropolis with ancient pockets — visit Meiji Shrine, explore Akihabara’s anime shops,
+          and enjoy panoramic views from Tokyo Skytree.
+        </p>
+        <img src="images/Tokyo.jpg" alt="Tokyo" class="attractionImage">
+      </div>
+      <div class="col-md-6">
+        <h3 class="attractionTitle">Kyoto</h3>
+        <p class="attractionText">
+          Japan’s historic heart: wander golden Kinkaku‑ji, walk the torii gates at Fushimi Inari, and
+          explore Gion’s geisha district.
+        </p>
+        <img src="images/Kyoto.jpg" alt="Kyoto" class="attractionImage">
+      </div>
+      <div class="col-md-6 mt-4">
+        <h3 class="attractionTitle">Osaka</h3>
+        <p class="attractionText">
+          Known as “Japan’s kitchen,” Osaka delights with street food in Dotonbori, the majestic castle,
+          and a friendly local vibe.
+        </p>
+        <img src="images/Osaka.jpg" alt="Osaka" class="attractionImage">
+      </div>
+      <div class="col-md-6 mt-4">
+        <h3 class="attractionTitle">Hokkaido</h3>
+        <p class="attractionText">
+          Japan’s northern wilderness: lavender fields, world‑class ski resorts, and the Sapporo Snow Festival.
+        </p>
+        <img src="images/Hokkaido.jpg" alt="Hokkaido" class="attractionImage">
+      </div>
+    </div>
+
+    <h2 class="sectionTitle mt-5">Must‑Try Foods</h2>
+    <div class="row">
+      <div class="col-md-6">
+        <h3 class="attractionTitle">Sushi</h3>
+        <p class="attractionText">Fresh, artfully prepared fish and rice — a quintessential Japanese delicacy.</p>
+        <img src="images/Sushi.jpg" alt="Sushi" class="attractionImage">
+      </div>
+      <div class="col-md-6">
+        <h3 class="attractionTitle">Ramen</h3>
+        <p class="attractionText">Regional broths from miso in Hokkaido to tonkotsu in Kyushu — slurp away!</p>
+        <img src="images/Ramen.jpg" alt="Ramen" class="attractionImage">
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <p class="copyright">&copy; 2025 EXPLORE. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Mobile menu toggle
+    const hamburger = document.getElementById('hamburger');
+    const navList = document.getElementById('navList');
+    hamburger.addEventListener('click', () => {
+      navList.classList.toggle('active');
+      hamburger.querySelector('i').classList.toggle('fa-times');
+      hamburger.querySelector('i').classList.toggle('fa-bars');
+    });
+
+    // Theme switcher
+    const html = document.documentElement;
+    const themeToggle = document.getElementById('themeToggle');
+    const themeDropdown = document.getElementById('themeDropdown');
+    const themeOptions = themeDropdown.querySelectorAll('.theme-option');
+
+    function setTheme(theme) {
+      if (theme === 'auto') {
+        const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        html.setAttribute('data-theme', dark ? 'dark' : 'light');
+      } else {
+        html.setAttribute('data-theme', theme);
+      }
+      themeOptions.forEach(o => o.classList.toggle('active', o.dataset.theme === theme));
+      localStorage.setItem('theme', theme);
+      themeToggle.innerHTML = html.getAttribute('data-theme') === 'dark'
+        ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+    }
+
+    themeToggle.addEventListener('click', e => {
+      e.stopPropagation();
+      themeDropdown.classList.toggle('show');
+    });
+    themeDropdown.addEventListener('click', e => e.stopPropagation());
+    document.addEventListener('click', () => themeDropdown.classList.remove('show'));
+
+    themeOptions.forEach(option => {
+      option.addEventListener('click', () => setTheme(option.dataset.theme));
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setTheme(localStorage.getItem('theme') || 'auto');
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if ((localStorage.getItem('theme') || 'auto') === 'auto') {
+          setTheme('auto');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Travel Itinerary Planner</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --accent: #f72585;
+            --success: #4cc9f0;
+            --card-bg: #ffffff;
+            --text: #7f89e6;
+            --text-light: #6c757d;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --border-radius: 12px;
+            --header-height: 80px;
+        }
+
+        [data-theme="dark"] {
+            --primary: #4895ef;
+            --primary-light: #4361ee;
+            --dark: #0d0d1a;
+            --light: #1a1a2e;
+            --card-bg: #16213e;
+            --text: #f8f9fa;
+            --text-light: #717c86;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--text);
+            transition: var(--transition);
+            line-height: 1.6;
+            padding-top: var(--header-height);
+        }
+
+        .glass-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            height: var(--header-height);
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        [data-theme="dark"] .glass-header {
+            background: rgba(26, 26, 46, 0.9);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            height: 100%;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .main-nav ul {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .main-nav li {
+            display: inline-block;
+        }
+
+        .main-nav a {
+            white-space: nowrap;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+            transition: var(--transition);
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 3px;
+           
+        }
+
+        .nav-link i {
+            font-size: 1.1rem;
+        }
+
+        /* Hamburger Menu Styles */
+        .hamburger {
+            position: absolute;
+            right: 80px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: none;
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 1001;
+            order: 1;
+            margin-left: 1rem;
+        }
+
+        .nav-text {
+            display: inline;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-switcher {
+            position: relative;
+        }
+
+        .theme-toggle {
+            background: rgba(67, 97, 238, 0.1);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(67, 97, 238, 0.2);
+        }
+
+        .theme-dropdown {
+            position: absolute;
+            right: 0;
+            top: 50px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1rem;
+            width: 180px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .theme-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-option:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .theme-option.active {
+            background: rgba(67, 97, 238, 0.2);
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .page-title {
+            text-align: center;
+            margin-bottom: 1rem;
+            margin-top: 20px;
+            font-size: 2.5rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .carousel {
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-item {
+            position: relative;
+            min-width: 400px;
+            margin: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .carousel-item img {
+            width: 400px;
+            height: 500px;
+            /* Adjusted height for better fit */
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .description {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            display: none;
+        }
+
+        .carousel-item:hover .description {
+            display: block;
+        }
+
+        .add-button {
+            position: fixed;
+            bottom: 70px;
+            right: 20px;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .form-container {
+            background: var(--card-bg);
+            padding: 20px;
+            width: 80%;
+            max-height: 80vh;
+            overflow-y: scroll;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .form-navigation {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .schedule-container {
+            margin: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .schedule-box {
+            background-color: var(--);
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            flex: 1 1 calc(33% - 40px);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .review-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3;
+        }
+
+        .review-container {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .reviews-container {
+            margin: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            background-color: var(--card-bg);
+        }
+
+        .review-box {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .country-category {
+            margin-bottom: 30px;
+        }
+
+        .country-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .attraction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .attraction-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+        .attraction-item:hover {
+            transform: scale(1.05);
+        }
+
+        .attraction-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+        }
+
+        .attraction-info {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .attraction-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            background-color: #fefefe;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .modal-content img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .modal-description {
+            color: #333;
+        }
+
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .clicked-shadow {
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5) !important;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 992px) {
+            .hamburger {
+                display: block;
+                order: 2;
+            }
+
+            .main-nav {
+                position: fixed;
+                top: var(--header-height);
+                left: 0;
+                right: 0;
+                background: var(--card-bg);
+                box-shadow: var(--shadow);
+                padding: 2rem;
+                transform: translateY(-100%);
+                opacity: 0;
+                transition: transform 0.3s ease, opacity 0.3s ease;
+                z-index: 1000;
+                pointer-events: none;
+                order: 2;
+                margin: 0 auto;
+            }
+
+            .main-nav.active {
+                transform: translateY(0);
+                opacity: 1;
+                pointer-events: all;
+            }
+
+            .main-nav ul {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .nav-text {
+                display: inline;
+            }
+
+            .header-actions {
+                order: 3;
+                margin-left: auto;
+            }
+
+            .header-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+            }
+
+            .main-nav ul {
+                gap: 1rem;
+            }
+
+            .blog-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+
+            /* Hide theme dropdown when mobile menu is open */
+            body.menu-open .theme-dropdown {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                height: auto;
+                padding: 1rem;
+            }
+
+            .logo {
+                margin-bottom: auto;
+            }
+
+            .main-nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .filter-buttons {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .nav-text {
+                display: none;
+            }
+
+            .main-nav ul {
+                align-items: center;
+            }
+
+            .nav-link {
+                justify-content: center;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+    <header class="glass-header">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-globe-americas"></i>
+                <span>EXPLORE</span>
+            </a>
+
+            <button class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <nav class="main-nav" id="mainNav">
+
+                <ul>
+                    <li><a href="index.html" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="DestinationPage.html" class="nav-link"><i
+                                class="fas fa-map-marked-alt"></i>Destinations</a></li>
+                    <li><a href="travelguide.html" class="nav-link"><i class="fas fa-book-open"></i> Travel Guide</a>
+                    </li>
+                    <li><a href="itinerary.html" class="nav-link active"><i class="fas fa-route"></i> Itinerary
+                            Planner</a>
+                    </li>
+                    <li><a href="TravelTips.html" class="nav-link"><i class="fas fa-lightbulb"></i> Travel Tips</a></li>
+                    <li><a href="gallery.html" class="nav-link"><i class="fas fa-images"></i> Gallery</a></li>
+                    <li><a href="blog.html" class="nav-link"><i class="fas fa-newspaper"></i> Blog</a></li>
+                    <li><a href="contact.html" class="nav-link"><i class="fas fa-question-circle"></i> About/FAQ</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <div class="theme-switcher">
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="theme-dropdown" id="themeDropdown">
+                        <div class="theme-option" data-theme="auto">
+                            <i class="fas fa-adjust"></i>
+                            <span>System</span>
+                        </div>
+                        <div class="theme-option" data-theme="light">
+                            <i class="fas fa-sun"></i>
+                            <span>Light</span>
+                        </div>
+                        <div class="theme-option" data-theme="dark">
+                            <i class="fas fa-moon"></i>
+                            <span>Dark</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <h1 class="page-title">Travel Itinerary Planner</h1>
+        <div class="carousel">
+            <button class="nav-button nav-left"></button>
+            <div class="carousel-track" id="carousel-track">
+                <div class="carousel-item" data-city="Tokyo"
+                    data-description="Tokyo: The heart of modern Japan and vibrant street culture.">
+                    <img src="images/tokyo.jpg" alt="Tokyo">
+                    <div class="description">Tokyo: The heart of modern Japan and vibrant street culture.</div>
+                </div>
+                <div class="carousel-item" data-city="Rome"
+                    data-description="Rome: Timeless history, grand ruins and delicious cuisine.">
+                    <img src="images/italy.jpg" alt="Rome">
+                    <div class="description">Rome: Timeless history, grand ruins and delicious cuisine.</div>
+                </div>
+                <div class="carousel-item" data-city="Hong Kong"
+                    data-description="Hong Kong: Skyline views and bustling night markets.">
+                    <img src="images/mongkok.jpg" alt="Hong Kong">
+                    <div class="description">Hong Kong: Skyline views and bustling night markets.</div>
+                </div>
+                <div class="carousel-item" data-city="Kuala Lumpur"
+                    data-description="Kuala Lumpur: Cultural diversity and Petronas Towers.">
+                    <img src="images/kualalumpur.jpg" alt="Kuala Lumpur">
+                    <div class="description">Kuala Lumpur: Cultural diversity and Petronas Towers.</div>
+                </div>
+                <div class="carousel-item" data-city="Melaka"
+                    data-description="Melaka: Historical city with unique cultural heritage.">
+                    <img src="images/melaka2.jpg" alt="Melaka">
+                    <div class="description">Melaka: Historical city with unique cultural heritage.</div>
+                </div>
+                <div class="carousel-item" data-city="Disneyland Hong Kong"
+                    data-description="Hong Kong Disneyland: A magical kingdom of fantasy and adventure.">
+                    <img src="images/disney.jpg" alt="Disneyland Hong Kong">
+                    <div class="description">Hong Kong Disneyland: A magical kingdom of fantasy and adventure.</div>
+                </div>
+                <div class="carousel-item" data-city="Chiang Rai"
+                    data-description="Chiang Rai: Northern Thailand's cultural hub with stunning temples.">
+                    <img src="images/chiangrai.jpg" alt="Chiang Rai">
+                    <div class="description">Chiang Rai: Northern Thailand's cultural hub with stunning temples.</div>
+                </div>
+            </div>
+            <button class="nav-button nav-right"></button>
+        </div>
+
+        <button class="add-button" onclick="openForm()">+</button>
+        <h1>  🟡Your Plan</h1>
+        <div class="form-modal" id="formModal">
+            <div class="form-container" id="formContainer">
+                <form id="travelForm">
+                    <div class="form-step active" id="step1">
+                        <h2 font-weight: bold;> 🏙️Select Your Destination</h2>
+                        <label for="countrySelect">Country:</label>
+                        <select id="countrySelect" onchange="updateCountryInfo(this.value)">
+                            <option value="">🟡🔵 Select Country 🔵🟡</option>
+                            <option value="Tokyo" style="color: rgb(164, 7, 7);">🟥 Tokyo, Japan</option>
+                            <option value="Rome" style="color: rgb(164, 67, 7);">🟧 Rome, Italy</option>
+                            <option value="Hong Kong" style="color: rgb(164, 135, 7);">🟨 Mong Kok, Hong Kong</option>
+                            <option value="Kuala Lumpur" style="color: rgb(7, 164, 101);">🟩 Kuala Lumpur, Malaysia</option>
+                            <option value="Melaka" style="color: rgb(7, 52, 164);">🟦 Melaka, Malaysia</option>
+                            <option value="Disneyland Hong Kong" style="color: rgb(93, 7, 164);">🟪 Disneyland Hong Kong</option>
+                            <option value="Chiang Rai" style="color: rgb(171, 168, 168);">⬜ Chiang Rai, Thailand</option>
+                        </select><br><br>
+                        <div id="countryInfo">
+                        </div>
+                        <div class="form-navigation">
+                            <button type="button" onclick="closeForm()" style="color: rgb(7, 52, 164); font-weight:bold;"> ❎Cancel</button>
+                            <button type="button" onclick="nextStep()" style="color: rgb(7, 52, 164); font-weight:bold;"> ➡️Next</button>
+                        </div>
+                    </div>
+
+                    <div class="form-step" id="step2">
+                        <h2 font-weight: bold;> 📝Your Travel Details</h2>
+                        <label for="name">Name:</label>
+                        <input type="text" id="name"><br><br>
+                        <label for="hotelSelect">Hotel:</label>
+                        <select id="hotelSelect">
+                            <option value="">🟡🔵 Select Hotel 🔵🟡</option>
+                            <option value="booked" style="color: rgb(7, 52, 164);">I had booked the hotel</option>
+                        </select><br><br>
+                        <label for="checkin">Check-in Date:</label>
+                        <input type="date" id="checkin"><br>
+                        <label for="checkout">Check-out Date:</label>
+                        <input type="date" id="checkout"><br><br>
+                        <label for="duration">Duration (days):</label>
+                        <input type="number" id="duration" min="1"><br><br>
+                        <div class="form-navigation">
+                            <button type="button" onclick="prevStep()" style="color: rgb(7, 52, 164); font-weight:bold;"> ⬅️Previous</button>
+                            <button type="button" onclick="nextStep()" style="color: rgb(7, 52, 164); font-weight:bold;"> ➡️Next</button>
+                        </div>
+                    </div>
+
+                    <div class="form-step" id="step3">
+                        <h2 font-weight: bold;> 🍜Select Attractions & Restaurants</h2>
+                        <div id="placesContainer">
+                        </div>
+                        <div class="form-navigation">
+                            <button type="button" onclick="prevStep()" style="color: rgb(7, 52, 164); font-weight:bold;"> ⬅️Previous</button>
+                            <button type="button" onclick="generateDailySchedule()" style="color: rgb(7, 52, 164); font-weight:bold;"> ✅Create Schedule</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="schedule-container" id="scheduleContainer">
+        </div>
+
+        <div class="review-modal" id="reviewModal">
+            <div class="review-container">
+                <h2 font-weight: bold;> 🩵Review Your Experience</h2>
+                <label for="rating" style="color: rgb(7, 52, 164)"> Rating (0-5 stars):</label>
+                <input type="number" id="rating" min="0" max="5"><br><br>
+                <label for="comment" style="color: rgb(7, 52, 164)">Comment (optional):</label><br>
+                <textarea id="comment"></textarea><br><br>
+                <button onclick="submitReview()" style="color: rgb(7, 52, 164); font-weight:bold;"> ✅Submit Review</button>
+                <button onclick="closeReviewForm()" style="color: rgb(7, 52, 164); font-weight:bold;"> ❎Not Now</button>
+            </div>
+        </div>
+
+        <div class="reviews-container" id="reviewsContainer">
+            <h1> 🟢User Reviews</h1>
+        </div>
+
+
+
+        <div class="country-category">
+            <h1> 🔵Tourists Attractions</h1>
+            <h2 class="country-title" style="color: rgb(51, 81, 154)"> 🗼Tokyo, Japan</h2>
+            <div class="attraction-grid">
+                <div class="attraction-item"
+                    onclick="openModal('tokyo-tower', 'Tokyo Tower', 'An iconic 333-meter communications and observation tower offering panoramic city views.', 'images/tokyo_tower_thumb.jpg')">
+                    <img src="images/tokyo_tower_thumb.jpg" alt="Tokyo Tower">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>Tokyo Tower</div>
+                    </div>
+                </div>
+                <div class="attraction-item"
+                    onclick="openModal('teamlab-planets', 'teamLab Planets', 'An immersive digital art museum known for its interactive and futuristic installations.', 'images/teamlab_planets_thumb.jpg')">
+                    <img src="images/teamlab_planets_thumb.jpg" alt="teamLab Planets">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>TeamLab Planets</div>
+                    </div>
+                </div>
+                <div class="attraction-item"
+                    onclick="openModal('alter-ego', 'Alter Ego', 'A renowned restaurant blending Italian and Japanese cuisines, part of Tokyo\'s vibrant fusion dining scene.', 'images/alter_ego_thumb.jpg')">
+                    <img src="images/alter_ego_thumb.jpg" alt="Alter Ego">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>Alter Ego</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="country-category">
+            <h2 class="country-title" style="color: rgb(51, 81, 154)"> 🏛️ Rome, Italy</h2>
+            <div class="attraction-grid">
+                <div class="attraction-item"
+                    onclick="openModal('colosseum', 'Colosseum', 'The ancient amphitheater renowned for its historical significance and architectural grandeur.', 'images/colosseum_thumb.jpg')">
+                    <img src="images/colosseum_thumb.jpg" alt="Colosseum">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>Colosseum</div>
+                    </div>
+                </div>
+                <div class="attraction-item"
+                    onclick="openModal('trevi-fountain', 'Trevi Fountain', 'A stunning Baroque fountain where visitors toss coins to ensure a return to Rome.', 'images/trevi_fountain_thumb.jpg')">
+                    <img src="images/trevi_fountain_thumb.jpg" alt="Trevi Fountain">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>Trevi Fountain</div>
+                    </div>
+                </div>
+                <div class="attraction-item"
+                    onclick="openModal('la-pergola', 'La Pergola', 'A three-Michelin-starred restaurant offering exquisite Italian cuisine with panoramic city views.', 'images/la_pergola_thumb.jpg')">
+                    <img src="images/la_pergola_thumb.jpg" alt="La Pergola">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>La Pergola</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="country-category">
+            <h2 class="country-title" style="color: rgb(51, 81, 154)"> 🏬 Mong Kok, Hong Kong</h2>
+            <div class="attraction-grid">
+                <div class="attraction-item"
+                    onclick="openModal('ladies-market', 'Ladies\' Market', 'A bustling street market famous for fashion, accessories, and souvenirs.', 'images/ladies_market.jpg')">
+                    <img src="images/ladies_market.jpg" alt="Ladies' Market">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>Ladies' Market</div>
+                    </div>
+                </div>
+                <div class="attraction-item"
+                    onclick="openModal('goldfish-market', 'Goldfish Market', 'A unique market specializing in aquarium fish and related accessories.', 'images/goldfish_market.jpg')">
+                    <img src="images/goldfish_market_thumb.jpg" alt="Goldfish Market">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>Goldfish Market</div>
+                    </div>
+                </div>
+                <div class="attraction-item"
+                    onclick="openModal('ming-court', 'Ming Court', 'A Michelin-starred restaurant known for its refined Cantonese dishes.', 'images/ming_court_thumb.jpg')">
+                    <img src="images/ming_court_thumb.jpg" alt="Ming Court">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>Ming Court</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="country-category">
+            <h2 class="country-title" style="color: rgb(51, 81, 154)"> 🏢 Kuala Lumpur, Malaysia</h2>
+            <div class="attraction-grid">
+                <div class="attraction-item"
+                    onclick="openModal('petronas-towers', 'Petronas Twin Towers', 'The tallest twin towers in the world, featuring a sky bridge and observation deck.', 'images/kuala_lumpur.jpg')">
+                    <img src="images/kuala_lumpur.jpg" alt="Petronas Twin Towers">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>Petronas Twin Towers</div>
+                    </div>
+                </div>
+                <div class="attraction-item"
+                    onclick="openModal('klcc-park', 'KLCC Park', 'A beautifully landscaped park offering walking paths, a fountain, and views of the Petronas Towers.', 'images/klcc_park_thumb.jpg')">
+                    <img src="images/klcc_park_thumb.jpg" alt="KLCC Park">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>KLCC Park</div>
+                    </div>
+                </div>
+                <div class="attraction-item"
+                    onclick="openModal('dewakan', 'Dewakan', 'A two-Michelin-starred restaurant celebrating modern Malaysian cuisine with indigenous ingredients.', 'images/dewakan_thumb.jpg')">
+                    <img src="images/dewakan_thumb.jpg" alt="Dewakan">
+                    <div class="attraction-info">
+                        <div class="attraction-name"  font-weight:bold;>Dewakan</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="country-category">
+            <h2 class="country-title" style="color: rgb(51, 81, 154);"> 🏯 Melaka, Malaysia</h2>
+            <div class="attraction-grid">
+                <div class="attraction-item"
+                    onclick="openModal('jonker-walk', 'Jonker Walk', 'A vibrant street in Chinatown known for its night market, antiques, and local delicacies.', 'images/jonker_street.jpg')">
+                    <img src="images/jonker_street.jpg" alt="Jonker Walk">
+                    <div class="attraction-info">
+                        <div class="attraction-name"  font-weight:bold;>Jonker Walk</div>
+                    </div>
+                </div>
+                <div class="attraction-item"
+                    onclick="openModal('st-johns-fort', 'St. John\'s Fort', 'A historic fort offering insights into Melaka\'s colonial past and panoramic views.', 'images/st_johns_fort_thumb.jpg')">
+                    <img src="images/st_johns_fort_thumb.jpg" alt="St. John's Fort">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>St. John's Fort</div>
+                    </div>
+                </div>
+                <div class="attraction-item"
+                    onclick="openModal('nancys-kitchen', 'Nancy\'s Kitchen', 'A popular restaurant serving authentic Nyonya (Peranakan) cuisine.', 'images/nancys_kitchen_thumb.jpg')">
+                    <img src="images/nancys_kitchen_thumb.jpg" alt="Nancy's Kitchen">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>Nancy's Kitchen</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="country-category">
+            <h2 class="country-title" style="color: rgb(51, 81, 154)"> 🏰 Hong Kong Disneyland</h2>
+            <div class="attraction-grid">
+                <div class="attraction-item"
+                    onclick="openModal('hk-disneyland-park', 'Hong Kong Disneyland Park', 'A magical theme park featuring classic Disney attractions and characters.', 'images/hk_disneyland_park_thumb.jpg')">
+                    <img src="images/hk_disneyland_park_thumb.jpg" alt="Hong Kong Disneyland Park">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>Hong Kong Disneyland Park</div>
+                    </div>
+                </div>
+                <div class="attraction-item"
+                    onclick="openModal('mystic-manor', 'Mystic Manor', 'A unique and immersive dark ride exclusive to Hong Kong Disneyland.', 'images/mystic_manor_thumb.jpg')">
+                    <img src="images/mystic_manor_thumb.jpg" alt="Mystic Manor">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>Mystic Manor</div>
+                    </div>
+                </div>
+                <div class="attraction-item"
+                    onclick="openModal('explorers-club', 'Explorer’s Club Restaurant', 'A highly themed counter-service restaurant offering a variety of Asian cuisines.', 'images/explorers_club.jpg')">
+                    <img src="images/explorers_club.jpg" alt="Explorer’s Club Restaurant">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>Explorer’s Club Restaurant</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="country-category">
+            <h2 class="country-title" style="color: rgb(51, 81, 154)"> 🛕 Chiang Rai, Thailand</h2>
+            <div class="attraction-grid">
+                <div class="attraction-item"
+                    onclick="openModal('wat-rong-khun', 'Wat Rong Khun (White Temple)', 'A contemporary, unconventional temple known for its striking white facade.', 'images/wat_rong_khun_thumb.jpg')">
+                    <img src="images/wat_rong_khun_thumb.jpg" alt="Wat Rong Khun (White Temple)">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>Wat Rong Khun (White Temple)</div>
+                    </div>
+                </div>
+                <div class="attraction-item"
+                    onclick="openModal('baan-dam', 'Baan Dam Museum (Black House)', 'An art museum featuring a collection of buildings showcasing Thai architecture and art.', 'images/baan_dam_thumb.jpg')">
+                    <img src="images/baan_dam_thumb.jpg" alt="Baan Dam Museum (Black House)">
+                    <div class="attraction-info">
+                        <div class="attraction-name"  font-weight:bold;>Baan Dam Museum (Black House)</div>
+                    </div>
+                </div>
+                <div class="attraction-item"
+                    onclick="openModal('chivit-thamma-da', 'Chivit Thamma Da Coffee House', 'A charming riverside café offering a relaxing atmosphere and delicious Thai dishes.', 'chivit_thamma_da_thumb.jpg')">
+                    <img src="images/chivit_thamma_da_thumb.jpg" alt="Chivit Thamma Da Coffee House">
+                    <div class="attraction-info">
+                        <div class="attraction-name" font-weight:bold;>Chivit Thamma Da Coffee House</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="imageModal" class="modal" onclick="closeModal()">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <span class="close-button" onclick="closeModal()">&times;</span>
+                <img id="modalImage" src="" alt="Full Image">
+                <p id="modalDescription" class="modal-description"></p>
+            </div>
+        </div>
+        <footer>
+            <div class="footer-content">
+                <p class="copyright">&copy; 2025 EXPLORE. All rights reserved.</p>
+            </div>
+        </footer>
+
+        <script>
+            const carouselTrack = document.getElementById('carousel-track');
+            const carouselItems = document.querySelectorAll('.carousel-item');
+            let currentIndex = 0;
+            const modal = document.getElementById("imageModal");
+            const modalImage = document.getElementById("modalImage");
+            const modalDescription = document.getElementById("modalDescription");
+            let currentlyClicked = null;
+            const itemWidth = document.querySelector('.carousel-item').offsetWidth; // Get width dynamically
+            let autoScrollInterval;
+            const autoScrollSpeed = 1500;
+            const themeToggle = document.getElementById('themeToggle');
+            const themeDropdown = document.getElementById('themeDropdown');
+            const themeOptions = document.querySelectorAll('.theme-option');
+            const html = document.documentElement;
+            const hamburger = document.getElementById('hamburger');
+            const mainNav = document.getElementById('mainNav');
+            const body = document.body;
+        // ===== Initialize Page (related part) =====
+        function initPage() {
+            // ... other initialization code ...
+
+            // Set initial theme
+            const savedTheme = localStorage.getItem('theme') || 'auto';
+            setTheme(savedTheme);
+        }
+
+        function setTheme(theme) {
+            if (theme === 'auto') {
+                const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                html.setAttribute('data-theme', systemTheme);
+            } else {
+                html.setAttribute('data-theme', theme);
+            }
+
+            // Update active state
+            themeOptions.forEach(option => {
+                option.classList.toggle('active', option.dataset.theme === theme);
+            });
+
+            // Update toggle icon
+            const currentTheme = theme === 'auto' ?
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') :
+                theme;
+
+            themeToggle.innerHTML = currentTheme === 'dark' ?
+                '<i class="fas fa-moon"></i>' :
+                '<i class="fas fa-sun"></i>';
+
+            // Save to localStorage
+            localStorage.setItem('theme', theme);
+        }
+
+        // Theme switcher
+        themeToggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            themeDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function () {
+            themeDropdown.classList.remove('show');
+        });
+
+        // Prevent dropdown from closing when clicking inside
+        themeDropdown.addEventListener('click', function (e) {
+            e.stopPropagation();
+        });
+
+        // Theme options
+        themeOptions.forEach(option => {
+            option.addEventListener('click', function () {
+                const selectedTheme = this.dataset.theme;
+                setTheme(selectedTheme);
+            });
+        });
+
+        // System theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (localStorage.getItem('theme') === 'auto') {
+                setTheme('auto');
+            }
+        });
+
+        // Initialize the page on load (call this function)
+        initPage();
+
+            function moveCarousel(direction) {
+                currentIndex += direction;
+                if (currentIndex < 0) {
+                    currentIndex = carouselItems.length - 1;
+                } else if (currentIndex >= carouselItems.length) {
+                    currentIndex = 0;
+                }
+                carouselTrack.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
+            }
+
+            document.querySelector('.nav-left').addEventListener('click', () => {
+                clearInterval(autoScrollInterval); // Stop auto scroll on manual navigation
+                moveCarousel(-1);
+                startAutoScroll(); // Restart auto scroll
+            });
+
+            document.querySelector('.nav-right').addEventListener('click', () => {
+                clearInterval(autoScrollInterval); // Stop auto scroll on manual navigation
+                moveCarousel(1);
+                startAutoScroll(); // Restart auto scroll
+            });
+
+            carouselItems.forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    item.querySelector('.description').style.display = 'block';
+                    clearInterval(autoScrollInterval); // Stop auto scroll on hover
+                });
+                item.addEventListener('mouseleave', () => {
+                    item.querySelector('.description').style.display = 'none';
+                    startAutoScroll(); // Restart auto scroll on mouse leave
+                });
+            });
+
+            function startAutoScroll() {
+                autoScrollInterval = setInterval(() => {
+                    moveCarousel(1); // Automatically move to the next item
+                }, autoScrollSpeed);
+            }
+
+            // Start automatic scrolling when the page loads
+            startAutoScroll();
+
+            // Make sure itemWidth is recalculated on window resize for responsiveness
+            window.addEventListener('resize', () => {
+                const previousIndexRatio = currentIndex / (carouselItems.length - 1); // Calculate ratio
+                itemWidth = document.querySelector('.carousel-item').offsetWidth;
+                currentIndex = Math.round(previousIndexRatio * (carouselItems.length - 1)); // Maintain relative position
+                carouselTrack.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
+            });
+
+
+
+            const formModal = document.getElementById("formModal");
+            const travelForm = document.getElementById("travelForm");
+            const formSteps = document.querySelectorAll(".form-step");
+            let currentStep = 0;
+
+            function openForm() {
+                formModal.style.display = "flex";
+                showStep(currentStep);
+            }
+
+            function closeForm() {
+                formModal.style.display = "none";
+                currentStep = 0;
+                formSteps.forEach(step => step.classList.remove('active'));
+                document.getElementById('countryInfo').innerHTML = '';
+                document.getElementById('hotelSelect').innerHTML = '<option value="">-- Select Hotel --</option><option value="booked">I had booked the hotel</option>';
+                document.getElementById('placesContainer').innerHTML = '';
+            }
+
+            function showStep(stepIndex) {
+                formSteps.forEach((step, index) => {
+                    step.classList.toggle('active', index === stepIndex);
+                });
+            }
+
+            function nextStep() {
+                const currentActiveStep = document.querySelector('.form-step.active');
+                let isValid = true;
+
+                if (currentActiveStep.id === 'step1') {
+                    if (!document.getElementById('countrySelect').value) {
+                        alert("Please select a country.");
+                        isValid = false;
+                    }
+                } else if (currentActiveStep.id === 'step2') {
+                    const name = document.getElementById('name').value;
+                    const checkin = document.getElementById('checkin').value;
+                    const checkout = document.getElementById('checkout').value;
+                    const duration = document.getElementById('duration').value;
+                    if (!name || !checkin || !checkout || !duration) {
+                        alert("Please fill in all your travel details.");
+                        isValid = false;
+                    }
+                }
+
+                if (isValid) {
+                    currentStep++;
+                    if (currentStep < formSteps.length) {
+                        showStep(currentStep);
+                        if (currentStep === 1) {
+                            populateHotelOptions(document.getElementById('countrySelect').value);
+                        } else if (currentStep === 2) {
+                            populateAttractionsRestaurants(document.getElementById('countrySelect').value);
+                        }
+                    }
+                }
+            }
+
+            function prevStep() {
+                currentStep--;
+                if (currentStep >= 0) {
+                    showStep(currentStep);
+                }
+            }
+
+            const countryData = {
+                "Tokyo": {
+                    address: "Tokyo, Japan",
+                    hotels: ["Mandarin Oriental Tokyo", "The Peninsula Tokyo", "Hoshinoya Tokyo"],
+                    places: [
+                        { name: "Tokyo Tower", description: "An iconic 333-meter communications and observation tower offering panoramic city views." },
+                        { name: "teamLab Planets", description: "An immersive digital art museum known for its interactive and futuristic installations." },
+                        { name: "Alter Ego", description: "A renowned restaurant blending Italian and Japanese cuisines." }
+                    ]
+                },
+                "Rome": {
+                    address: "Rome, Italy",
+                    hotels: ["Anantara Palazzo Naiadi Rome Hotel", "The Pantheon Iconic Rome Hotel", "Hotel de Russie"],
+                    places: [
+                        { name: "Colosseum", description: "The ancient amphitheater renowned for its historical significance." },
+                        { name: "Trevi Fountain", description: "A stunning Baroque fountain where visitors toss coins." },
+                        { name: "La Pergola", description: "A three-Michelin-starred restaurant with panoramic city views." }
+                    ]
+                },
+                "Hong Kong": {
+                    address: "Mong Kok, Hong Kong",
+                    hotels: ["Dorsett Mongkok", "Cordis Hong Kong", "Royal Plaza Hotel"],
+                    places: [
+                        { name: "Ladies' Market", description: "A bustling street market for fashion and souvenirs." },
+                        { name: "Goldfish Market", description: "A unique market specializing in aquarium fish." },
+                        { name: "Ming Court", description: "A Michelin-starred restaurant known for its refined Cantonese dishes." }
+                    ]
+                },
+                "Kuala Lumpur": {
+                    address: "Kuala Lumpur, Malaysia",
+                    hotels: ["The Federal Kuala Lumpur", "Traders Hotel Kuala Lumpur", "The Majestic Hotel Kuala Lumpur"],
+                    places: [
+                        { name: "Petronas Twin Towers", description: "The tallest twin towers with a sky bridge." },
+                        { name: "KLCC Park", description: "A landscaped park with walking paths and a fountain." },
+                        { name: "Dewakan", description: "A two-Michelin-starred restaurant with modern Malaysian cuisine." }
+                    ]
+                },
+                "Melaka": {
+                    address: "Melaka, Malaysia",
+                    hotels: ["The Pines Melaka", "Casa del Rio Melaka", "Hatten Hotel Melaka"],
+                    places: [
+                        { name: "Jonker Walk", description: "A vibrant street in Chinatown with a night market." },
+                        { name: "St. John's Fort", description: "A historic fort offering panoramic views." },
+                        { name: "Nancy's Kitchen", description: "A popular restaurant serving authentic Nyonya cuisine." }
+                    ]
+                },
+                "Disneyland Hong Kong": {
+                    address: "Hong Kong Disneyland, Hong Kong",
+                    hotels: ["Hong Kong Disneyland Hotel", "Disney Explorers Lodge", "Disney's Hollywood Hotel"],
+                    places: [
+                        { name: "Hong Kong Disneyland Park", description: "A magical theme park with Disney attractions." },
+                        { name: "Mystic Manor", description: "A unique and immersive dark ride." },
+                        { name: "Explorer’s Club Restaurant", description: "A themed restaurant offering Asian cuisines." }
+                    ]
+                },
+                "Chiang Rai": {
+                    address: "Chiang Rai, Thailand",
+                    hotels: ["The Riverie by Katathani", "Le Meridien Chiang Rai Resort", "Mora Boutique Hotel"],
+                    places: [
+                        { name: "Wat Rong Khun (White Temple)", description: "A contemporary and unconventional white temple." },
+                        { name: "Baan Dam Museum (Black House)", description: "An art museum showcasing Thai architecture and art." },
+                        { name: "Chivit Thamma Da Coffee House", description: "A riverside café with delicious Thai dishes." }
+                    ]
+                }
+            };
+
+            function updateCountryInfo(country) {
+                const infoDiv = document.getElementById('countryInfo');
+                if (countryData[country]) {
+                    infoDiv.innerHTML = `<p><strong>Location:</strong> ${countryData[country].address}</p>`;
+                } else {
+                    infoDiv.innerHTML = '';
+                }
+            }
+
+            function populateHotelOptions(country) {
+                const hotelSelect = document.getElementById('hotelSelect');
+                hotelSelect.innerHTML = '<option value="">-- Select Hotel --</option><option value="booked">I had booked the hotel</option>';
+                if (countryData[country] && countryData[country].hotels) {
+                    countryData[country].hotels.forEach(hotel => {
+                        const option = document.createElement('option');
+                        option.value = hotel;
+                        option.textContent = hotel;
+                        hotelSelect.appendChild(option);
+                    });
+                }
+            }
+
+            function populateAttractionsRestaurants(country) {
+                const placesContainer = document.getElementById('placesContainer');
+                placesContainer.innerHTML = '';
+                if (countryData[country] && countryData[country].places) {
+                    countryData[country].places.forEach((place, index) => {
+                        const placeDiv = document.createElement('div');
+                        placeDiv.innerHTML = `
+                    <input type="checkbox" id="place${index}" name="selectedPlaces" value="${place.name}">
+                    <label for="place${index}"><strong>${place.name}</strong> - ${place.description}</label><br>
+                `;
+                        placesContainer.appendChild(placeDiv);
+                    });
+                }
+            }
+
+            function generateDailySchedule() {
+                const country = document.getElementById('countrySelect').value;
+                const checkinDate = new Date(document.getElementById('checkin').value);
+                const checkoutDate = new Date(document.getElementById('checkout').value);
+                const durationInput = parseInt(document.getElementById('duration').value);
+                const selectedPlaces = Array.from(document.querySelectorAll('input[name="selectedPlaces"]:checked')).map(cb => cb.value);
+                const scheduleContainer = document.getElementById('scheduleContainer');
+                scheduleContainer.innerHTML = '';
+
+                if (!country || isNaN(checkinDate.getTime()) || isNaN(checkoutDate.getTime()) || isNaN(durationInput) || durationInput <= 0 || checkinDate >= checkoutDate) {
+                    alert("Please ensure you have selected a country, valid check-in and check-out dates, and a valid duration.");
+                    return;
+                }
+
+                const duration = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
+
+                for (let i = 0; i <= duration; i++) {
+                    const currentDate = new Date(checkinDate);
+                    currentDate.setDate(checkinDate.getDate() + i);
+                    const dayDiv = document.createElement('div');
+                    dayDiv.className = 'schedule-box';
+                    dayDiv.innerHTML = `<h3>${country}Trip Day ${i + 1} (${currentDate.toLocaleDateString()})</h3>`;
+
+                    const morningSelect = createTimeSlotSelect("Morning", selectedPlaces);
+                    const afternoonSelect = createTimeSlotSelect("Afternoon", selectedPlaces);
+                    const eveningSelect = createTimeSlotSelect("Evening", selectedPlaces);
+                    const transportSelect = createTransportSelect();
+
+                    dayDiv.appendChild(morningSelect);
+                    dayDiv.appendChild(afternoonSelect);
+                    dayDiv.appendChild(eveningSelect);
+                    dayDiv.appendChild(transportSelect);
+
+                    scheduleContainer.appendChild(dayDiv);
+                }
+
+                closeForm();
+                openReviewForm();
+            }
+
+            function createTimeSlotSelect(timeSlot, places) {
+                const selectDiv = document.createElement('div');
+                selectDiv.innerHTML = `<label for="${timeSlot.toLowerCase()}">${timeSlot}:</label><br>`;
+                const select = document.createElement('select');
+                select.id = timeSlot.toLowerCase();
+                const defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.textContent = `Select ${timeSlot} Activity`;
+                select.appendChild(defaultOption);
+                places.forEach(place => {
+                    const option = document.createElement('option');
+                    option.value = place;
+                    option.textContent = place;
+                    select.appendChild(option);
+                });
+                selectDiv.appendChild(select);
+                return selectDiv;
+            }
+
+            function createTransportSelect() {
+                const selectDiv = document.createElement('div');
+                selectDiv.innerHTML = `<label for="transport-day-${Date.now()}">Transportation:</label><br>`;
+                const select = document.createElement('select');
+                select.id = `transport-day-${Date.now()}`;
+                const options = ["Train", "Car", "Bus", "Airplane", "Underground", "MRT"];
+                options.forEach(option => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = option;
+                    optionElement.textContent = option;
+                    select.appendChild(optionElement);
+                });
+                selectDiv.appendChild(select);
+                return selectDiv;
+            }
+
+            const reviewModal = document.getElementById('reviewModal');
+            const reviewsContainer = document.getElementById('reviewsContainer');
+
+            function openReviewForm() {
+                reviewModal.style.display = 'flex';
+            }
+
+            function closeReviewForm() {
+                reviewModal.style.display = 'none';
+            }
+
+            function submitReview() {
+                const rating = document.getElementById('rating').value;
+                const comment = document.getElementById('comment').value;
+
+                const reviewBox = document.createElement('div');
+                reviewBox.className = 'review-box';
+                reviewBox.innerHTML = `
+            <h3>User Review</h3>
+            <p><strong>Rating:</strong> ${rating} stars</p>
+            ${comment ? `<p><strong>Comment:</strong> ${comment}</p>` : ''}
+        `;
+                reviewsContainer.appendChild(reviewBox);
+                closeReviewForm();
+                document.getElementById('rating').value = '';
+                document.getElementById('comment').value = '';
+            }
+
+            function openModal(id, name, description, imageSrc) {
+                modal.style.display = "block";
+                modalImage.src = imageSrc;
+                modalDescription.textContent = description;
+
+                const clickedItem = document.querySelector(`.attraction-item[onclick*='${id}']`);
+                if (currentlyClicked && currentlyClicked !== clickedItem) {
+                    currentlyClicked.classList.remove('clicked-shadow');
+                }
+                if (clickedItem) {
+                    clickedItem.classList.add('clicked-shadow');
+                    currentlyClicked = clickedItem;
+                }
+            }
+
+            function closeModal() {
+                modal.style.display = "none";
+                if (currentlyClicked) {
+                    currentlyClicked.classList.remove('clicked-shadow');
+                    currentlyClicked = null;
+                }
+            }
+        </script>
+
+</body>
+
+</html>

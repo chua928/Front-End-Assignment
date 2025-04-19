@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rome</title>
+  <!-- Bootstrap, Font Awesome & Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Google Fonts: Montserrat for headings and Roboto for body text -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ===== Global Variables ===== */
+    :root {
+      --primary: #4361ee;
+      --secondary: #3f37c9;
+      --dark: #1a1a2e;
+      --light: #f8f9fa;
+      --card-bg: #ffffff;
+      --text: #333333;
+      --text-light: #6c757d;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+      --border-radius: 12px;
+      --header-height: 80px;
+    }
+  
+    [data-theme="dark"] {
+      --primary: #4895ef;
+      --dark: #0d0d1a;
+      --light: #1a1a2e;
+      --card-bg: #16213e;
+      --text: #f8f9fa;
+      --text-light: #adb5bd;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+  
+    /* ===== Font & Global Alignment ===== */
+    body {
+      margin: 0;
+      padding-top: var(--header-height);
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--light);
+      color: var(--text);
+      transition: var(--transition);
+      line-height: 1.6;
+      
+      text-align: center;
+    }
+    h1, h2, h3, .logo {
+      font-family: 'Montserrat', sans-serif;
+    }
+  
+    /* ===== Navigation Styles ===== */
+    .glass-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-height);
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      z-index: 1000;
+      transition: var(--transition);
+    }
+    [data-theme="dark"] .glass-header {
+      background: rgba(26,26,46,0.9);
+    }
+    .header-container {
+      max-width: 1200px;
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nav-list {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .nav-link {
+      margin: 0 1rem;
+      color: var(--text);
+      font-weight: 500;
+      text-decoration: none;
+      position: relative;
+      transition: var(--transition);
+    }
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--primary);
+    }
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 3px;
+    }
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--text);
+    }
+    /* Theme Switcher */
+    .theme-switcher {
+      position: relative;
+    }
+    .theme-toggle {
+      background: rgba(67, 97, 238, 0.1);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .theme-dropdown {
+      position: absolute;
+      right: 0;
+      top: 50px;
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 1rem;
+      width: 150px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+    .theme-dropdown.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .theme-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+    .theme-option.active {
+      background: rgba(67, 97, 238, 0.2);
+      color: var(--primary);
+      font-weight: 500;
+    }
+    .theme-option:hover {
+      background: rgba(67, 97, 238, 0.1);
+    }
+    @media (max-width: 992px) {
+      .hamburger {
+        display: block;
+      }
+      .nav-list {
+        display: none;
+        flex-direction: column;
+        background: var(--card-bg);
+        position: absolute;
+        top: var(--header-height);
+        left: 0;
+        width: 100%;
+        padding: 2rem;
+        box-shadow: var(--shadow);
+      }
+      .nav-list.active {
+        display: flex;
+      }
+      .nav-link {
+        margin: 1rem 0;
+      }
+    }
+    
+    /* ===== Footer Styles ===== */
+    footer {
+      background-color: var(--dark);
+      color: #fff;
+      text-align: center;
+      padding: 2rem 0;
+      margin-top: 4rem;
+    }
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    .copyright {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    
+    /* ===== Rome Page Content Styling ===== */
+    .mainTitle {
+      margin-top: 2rem;
+      font-size: 2.5rem;
+      font-weight: 600;
+    }
+    .introText {
+      font-size: 1.1rem;
+    }
+    .sectionTitle {
+      margin-top: 2rem;
+      font-weight: 600;
+      font-size: 1.8rem;
+      color: var(--primary);
+    }
+    .attractionTitle {
+      margin-top: 1rem;
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
+    .attractionText,
+    .adviceText {
+      font-size: 1rem;
+    }
+    .advice-section h3 {
+      margin-top: 1rem;
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body data-theme="auto">
+  <!-- Navigation -->
+  <header class="glass-header">
+    <div class="header-container">
+      <a href="Home.html" class="logo">
+        <i class="fas fa-globe-americas"></i>
+        EXPLORE
+      </a>
+      <button class="hamburger" id="hamburger">
+        <i class="fas fa-bars"></i>
+      </button>
+      <ul class="nav-list" id="navList">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="DestinationPage.html" class="nav-link">Destinations</a></li>
+        <li><a href="travelguide.html" class="nav-link">Travel Guide</a></li>
+        <li><a href="itinerary.html" class="nav-link">Itinerary Planner</a></li>
+        <li><a href="TravelTips.html" class="nav-link active">Travel Tips</a></li>
+        <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+        <li><a href="blog.html" class="nav-link">Blog</a></li>
+        <li><a href="contact.html" class="nav-link">About/FAQ</a></li>
+      </ul>
+      <div class="theme-switcher">
+        <button class="theme-toggle" id="themeToggle"><i class="fas fa-adjust"></i></button>
+        <div class="theme-dropdown" id="themeDropdown">
+          <div class="theme-option" data-theme="auto"><i class="fas fa-adjust"></i><span>System</span></div>
+          <div class="theme-option" data-theme="light"><i class="fas fa-sun"></i><span>Light</span></div>
+          <div class="theme-option" data-theme="dark"><i class="fas fa-moon"></i><span>Dark</span></div>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Main Content -->
+  <main style="min-height: 60vh; padding: 2rem;">
+    <div class="container mt-5">
+      <h1 class="mainTitle text-center">Rome</h1>
+  
+      <div class="row my-4">
+        <div class="col-md-12 text-center">
+          <img src="images/Rome.jpg" class="mainImage img-fluid" alt="Rome">
+        </div>
+      </div>
+  
+      <div class="row">
+        <div class="col-md-12">
+          <p class="introText">
+            Rome is the capital of Italy and one of the most famous historical and cultural cities in the world. Known as the "Eternal City", Rome combines ancient civilization with modern life and is a city full of legends and romance. Whether you are visiting Italy for the first time or you love history, art, food or shopping, Rome can bring you an unforgettable travel experience.
+          </p>
+        </div>
+      </div>
+  
+      <h2 class="sectionTitle mt-5">Traffic and travel suggestions</h2>
+      <p>
+        Rome is a city of concentrated attractions, and most areas can be covered on foot, but public transportation is also very useful:
+      </p>
+      <ul class="transportList">
+        <li><strong>Metro:</strong> Line A and Line B connect major attractions.</li>
+        <li><strong>Buses and Trams:</strong> Wide road network but slightly slower in traffic jams</li>
+        <li><strong>Walking:</strong> It’s the best way to feel the atmosphere of the city.</li>
+      </ul>
+      <p>
+        <strong>Tips:</strong> Be sure to punch your ticket on the yellow machine before taking the bus; it is recommended to download Moovit or Google Maps to help with navigation.
+      </p>
+  
+      <h2 class="sectionTitle mt-5">Famous attractions recommendations</h2>
+      <div class="row my-4">
+        <div class="col-md-6">
+          <h3 class="attractionTitle">Colosseum</h3>
+          <p class="attractionText">
+            The symbol of the ancient Roman Empire. It is recommended to book tickets online in advance to avoid the long queues.
+          </p>
+          <img src="images/Colosseum.jpg" class="attractionImage img-fluid" alt="Colosseum">
+        </div>
+        <div class="col-md-6">
+          <h3 class="attractionTitle">Roman Forum</h3>
+          <p class="attractionText">
+            As the center of ancient Roman political and religious activities, the ground is uneven, so it is recommended to wear comfortable shoes.
+          </p>
+          <img src="images/RomanForum.jpg" class="attractionImage img-fluid mt-4" alt="Rome Forum">
+        </div>
+      </div>
+  
+      <h2 class="sectionTitle mt-5">Authentic food recommendations</h2>
+      <div class="row my-4">
+        <div class="col-md-6">
+          <h3 class="attractionTitle">Carbonara</h3>
+          <p class="attractionText">
+            The original version does not contain cream and has a rich taste.
+          </p>
+          <img src="images/Carbonara.jpg" class="attractionImage img-fluid" alt="Carbonara">
+        </div>
+        <div class="col-md-6">
+          <h3 class="attractionTitle">Pizza al Taglio</h3>
+          <p class="attractionText">
+            Commonly found in street shops, priced by weight.
+          </p>
+          <img src="images/Pizza al Tagilo.jpg" class="attractionImage img-fluid mt-4" alt="Pizza al Taglio">
+        </div>
+      </div>
+      
+      <!-- Travel Preparation Advice Section -->
+      <h2 class="sectionTitle mt-5">Travel Preparation Advice</h2>
+      <div class="advice-section">
+        <h3>Budgeting</h3>
+        <p class="adviceText">
+          Rome can be enjoyed on a range of budgets. For affordable travel, consider using public transportation, dining at local trattorias, and booking attractions in advance to secure discounts. Setting a daily spending limit and using budgeting apps can help you keep your expenses in check.
+        </p>
+  
+        <h3>Packing</h3>
+        <p class="adviceText">
+          Pack light and comfortable clothing suitable for extensive walking, and include layers for changing weather conditions. Essential items include a pair of comfortable walking shoes, a travel adapter, a reusable water bottle, sunscreen, and a basic first aid kit. If you plan to visit religious sites, bring attire that covers shoulders and knees.
+        </p>
+  
+        <h3>Safety</h3>
+        <p class="adviceText">
+          While Rome is generally safe for tourists, always stay vigilant—pickpocketing can occur in crowded areas. Carry photocopies of your important documents, avoid displaying excessive cash, and consider using a money belt. Also, download a translation app or learn a few basic Italian phrases to handle any emergency or miscommunication.
+        </p>
+  
+        <h3>Local Customs</h3>
+        <p class="adviceText">
+          Embrace Rome's vibrant local culture by greeting locals with a friendly "Buongiorno" or "Buonasera." Tipping is appreciated in restaurants and cafes, though not compulsory—a 10% tip is usually sufficient. Be aware of the local pace of life and show respect when visiting historical religious sites by dressing appropriately.
+        </p>
+      </div>
+      
+    </div>
+  </main>
+  
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <p class="copyright">&copy; 2025 EXPLORE. All rights reserved.</p>
+    </div>
+  </footer>
+  
+  <!-- Template Scripts -->
+  <script>
+    const html = document.documentElement;
+    const hamburger = document.getElementById('hamburger');
+    const navList = document.getElementById('navList');
+    const themeToggle = document.getElementById('themeToggle');
+    const themeDropdown = document.getElementById('themeDropdown');
+    const themeOptions = document.querySelectorAll('.theme-option');
+  
+    function toggleMobileMenu() {
+      navList.classList.toggle('active');
+      const icon = hamburger.querySelector('i');
+      icon.classList.toggle('fa-bars');
+      icon.classList.toggle('fa-times');
+    }
+  
+    function setTheme(theme) {
+      if (theme === 'auto') {
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        html.setAttribute('data-theme', systemDark ? 'dark' : 'light');
+      } else {
+        html.setAttribute('data-theme', theme);
+      }
+      themeOptions.forEach(o => o.classList.toggle('active', o.dataset.theme === theme));
+      localStorage.setItem('theme', theme);
+      const current = html.getAttribute('data-theme');
+      themeToggle.innerHTML = current === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+    }
+  
+    hamburger.addEventListener('click', toggleMobileMenu);
+    themeToggle.addEventListener('click', e => {
+      e.stopPropagation();
+      themeDropdown.classList.toggle('show');
+    });
+    document.addEventListener('click', () => themeDropdown.classList.remove('show'));
+    themeDropdown.addEventListener('click', e => e.stopPropagation());
+    themeOptions.forEach(option => option.addEventListener('click', () => setTheme(option.dataset.theme)));
+  
+    document.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('theme') || 'auto';
+      setTheme(saved);
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if ((localStorage.getItem('theme') || 'auto') === 'auto') setTheme('auto');
+      });
+    });
+  </script>
+  
+  <!-- Bootstrap JS and Dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
